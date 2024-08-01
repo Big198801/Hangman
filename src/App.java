@@ -9,9 +9,12 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) {
     ArrayList<String> words = writeWordsFromFileToList();
-    System.out.println(words.size());
-    String hiddenWord = getRandomWordFromList(words);
+    //System.out.println(words.size());
+    char[] wishedWord = getRandomWordFromList(words);
     //char letter = inputLetterbyUser();
+    printWishedWord(wishedWord);
+    //String[] hiddencopy = makeWishedWordHiddenCopy(wishedWord);
+    //printHiddenCopy(hiddencopy);
 
     }
 
@@ -49,12 +52,23 @@ public class App {
      * @param listOfWords принимает список ArrayList<String> слов
      * @return String
      */
-    public static String getRandomWordFromList(ArrayList<String> listOfWords){
+    public static char[] getRandomWordFromList(ArrayList<String> listOfWords){
         if (listOfWords.size() == 0){
             return null;
         }
         int randomNum = 1 + (int) (Math.random()*listOfWords.size()-1); //интервал от 1 до listOfWords.size()-1
-        return listOfWords.get(randomNum-1);//вычитаем 1 для возможности включения 0-го элемента
+        return listOfWords.get(randomNum-1).toCharArray();//вычитаем 1 для возможности включения 0-го элемента
+    }
+
+    /**
+     * распечетка в консоль загаданного слова
+     * @param wishedWord загаданное слово в формате char[]
+     */
+    public static void printWishedWord(char[] wishedWord){
+        System.out.print("Загаданное слово: ");
+        for (int i = 0; i < wishedWord.length; i++) {
+            System.out.print(wishedWord[i]);
+        }
     }
 
     /**
@@ -69,29 +83,48 @@ public class App {
     }
 
     //проверка присутствия буквы в слове
-    public boolean isLetterAreInWishedWord(String wishedWord, char inputLetterbyUser){
-        if(wishedWord.indexOf(inputLetterbyUser) != -1){
-            return true;
+    public boolean isLetterAreInWishedWord(char[] wishedWord, char inputLetterbyUser) {
+        boolean isContains = false;
+        for (char ch : wishedWord) {
+            if (ch == inputLetterbyUser) {
+                isContains = true;
+            }
         }
-        else {
-            return false;
-        }
+        return isContains;
     }
+
+
     /**
-     * отрисовка отгадываемого слова
+     * создание скрытого слова равного длине загаданного
+     * @param wishedWord загаданное слово
+     * @return массив символов
      */
-    public String[] hideWordviewer(String wishedWord){
-        System.out.println("не реализован");
-        return new String[wishedWord.length()];
+    public static String[] makeWishedWordHiddenCopy(String wishedWord){
+        String[] hiddenCopy = new String[wishedWord.length()];
+        for (int i = 0; i < hiddenCopy.length; i++) {
+            hiddenCopy[i] = "*";
+        }
+        return hiddenCopy;
+    }
+
+    //распечатка скрытой копии
+    public static void printHiddenCopy(String[] hiddenCopy){
+        for (int i = 0; i < hiddenCopy.length; i++) {
+            System.out.print(hiddenCopy[i]);
+        }
     }
 
 
     //отрисовка отгаданных букв
-    public void showGuessedLetterinHiddenWord(String[] hiddenletters, char inputLetter){
-        //не реализован
-
-
-    }
+//    public void showGuessedLetterinHiddenWord(String[] hiddenletters, char inputLetter, String wishedWord){
+//       wishedWord.toCharArray();
+//        for (int i = 0; i < wishedWord.length(); i++) {
+//
+//            if (wishedWord.
+//        }
+//
+//
+//    }
 
 
 
