@@ -11,7 +11,7 @@ public class App {
     ArrayList<String> words = writeWordsFromFileToList();
     System.out.println(words.size());
     String hiddenWord = getRandomWordFromList(words);
-    char letter = inputLetterbyUser();
+    //char letter = inputLetterbyUser();
 
     }
 
@@ -27,8 +27,7 @@ public class App {
     public static ArrayList<String> writeWordsFromFileToList()  {
         ArrayList<String> words = new ArrayList<>();
            try {
-               File file = new File("/Users/big198801/Desktop/DEV/PetProjects/Hangman/src/words.txt");
-               FileReader fr = new FileReader(file);
+               FileReader fr = new FileReader("words.txt");
                BufferedReader reader = new BufferedReader(fr);
                String line = reader.readLine();
                while (line != null) {
@@ -51,6 +50,9 @@ public class App {
      * @return String
      */
     public static String getRandomWordFromList(ArrayList<String> listOfWords){
+        if (listOfWords.size() == 0){
+            return null;
+        }
         int randomNum = 1 + (int) (Math.random()*listOfWords.size()-1); //интервал от 1 до listOfWords.size()-1
         return listOfWords.get(randomNum-1);//вычитаем 1 для возможности включения 0-го элемента
     }
@@ -66,14 +68,6 @@ public class App {
         return letter;
     }
 
-    /**
-     * отрисовка отгадываемого слова
-     */
-    public String[] hideWordviewer(String wishedWord){
-        System.out.println("не реализован");
-        return new String[wishedWord.length()];
-    }
-
     //проверка присутствия буквы в слове
     public boolean isLetterAreInWishedWord(String wishedWord, char inputLetterbyUser){
         if(wishedWord.indexOf(inputLetterbyUser) != -1){
@@ -83,6 +77,14 @@ public class App {
             return false;
         }
     }
+    /**
+     * отрисовка отгадываемого слова
+     */
+    public String[] hideWordviewer(String wishedWord){
+        System.out.println("не реализован");
+        return new String[wishedWord.length()];
+    }
+
 
     //отрисовка отгаданных букв
     public void showGuessedLetterinHiddenWord(String[] hiddenletters, char inputLetter){
