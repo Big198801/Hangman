@@ -1,30 +1,42 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class App {
+    public static final int MAX_COUNT_OF_MISTAKES = 8;
+    public static int countOfMistakes;
     public static void main(String[] args) {
-    ArrayList<String> words = writeWordsFromFileToList();
-    //System.out.println(words.size());
-    char[] wishedWord = getRandomWordFromList(words);
-    //char letter = inputLetterbyUser();
-    printWishedWord(wishedWord);
-    //String[] hiddencopy = makeWishedWordHiddenCopy(wishedWord);
-    //printHiddenCopy(hiddencopy);
+        ArrayList<String> words = writeWordsFromFileToList();
+        char[] wishedWord = getRandomWordFromList(words);
+        printWishedWord(wishedWord);
+        char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
+        printHiddenCopy(hiddenCopy);
+        char supposedLetter = inputLetterByUser();
+        if (isLetterAreInWishedWord(wishedWord, supposedLetter)){
+            viewGreetingsOfRightLetterAppears();
+            openGuessedLettersInHiddenWord(supposedLetter, hiddenCopy, wishedWord);
+            printHiddenCopy(hiddenCopy);
+        }
+        else{
+            viewWrongLetterAppears();
+            printHiddenCopy(hiddenCopy);
+            countOfMistakes++;
+            printRemainedAttempts(countOfMistakes);
+        }
 
     }
 
+
     /**
-     * запуск игры
+     * Запуск игры
      */
     public  void  startHangmanGame(){}
 
     /**
-     * запись слов из файла в список
+     * Запись слов из файла в список
      * @return ArrayList<String>
      */
     public static ArrayList<String> writeWordsFromFileToList()  {
@@ -48,7 +60,7 @@ public class App {
     }
 
     /**
-     * получение случайного слова из списка
+     * Получение случайного слова из списка
      * @param listOfWords принимает список ArrayList<String> слов
      * @return String
      */
@@ -61,73 +73,102 @@ public class App {
     }
 
     /**
-     * распечетка в консоль загаданного слова
-     * @param wishedWord загаданное слово в формате char[]
+     * Ввод буквы от пользователя
+     * @return букву
      */
-    public static void printWishedWord(char[] wishedWord){
-        System.out.print("Загаданное слово: ");
-        for (int i = 0; i < wishedWord.length; i++) {
-            System.out.print(wishedWord[i]);
-        }
+    public static char inputLetterByUser() {
+        System.out.print("введите букву: ");
+        Scanner sc = new Scanner(System.in);
+        return sc.next().toUpperCase().charAt(0);
     }
 
     /**
-     * ввод буквы от пользователя
-     * @return букву
+     * Проверка присутствия буквы в загаданном слове
+     * @param wishedWord загаданное слово
+     * @param inputLetterByUser введенная буква
+     * @return true or false
      */
-    public static char inputLetterbyUser() {
-        System.out.println("введите букву: ");
-        Scanner sc = new Scanner(System.in);
-        char letter = sc.next().toUpperCase().charAt(0);
-        return letter;
-    }
-
-    //проверка присутствия буквы в слове
-    public boolean isLetterAreInWishedWord(char[] wishedWord, char inputLetterbyUser) {
+    public static boolean isLetterAreInWishedWord(char[] wishedWord, char inputLetterByUser) {
         boolean isContains = false;
         for (char ch : wishedWord) {
-            if (ch == inputLetterbyUser) {
+            if (ch == inputLetterByUser) {
                 isContains = true;
+                break;
             }
         }
         return isContains;
     }
 
-
     /**
-     * создание скрытого слова равного длине загаданного
+     * Создание скрытого слова равного длине загаданного
      * @param wishedWord загаданное слово
      * @return массив символов
      */
-    public static String[] makeWishedWordHiddenCopy(String wishedWord){
-        String[] hiddenCopy = new String[wishedWord.length()];
-        for (int i = 0; i < hiddenCopy.length; i++) {
-            hiddenCopy[i] = "*";
-        }
+    public static char[] makeWishedWordHiddenCopy(char[] wishedWord){
+        char[] hiddenCopy = new char[wishedWord.length];
+        Arrays.fill(hiddenCopy, '*');
         return hiddenCopy;
     }
 
-    //распечатка скрытой копии
-    public static void printHiddenCopy(String[] hiddenCopy){
-        for (int i = 0; i < hiddenCopy.length; i++) {
-            System.out.print(hiddenCopy[i]);
+    /**
+     * Распечетка загаданного слова
+     * @param wishedWord загаданное слово в формате char[]
+     */
+    public static void printWishedWord(char[] wishedWord){
+        System.out.print("Загаданное слово: ");
+        for (char c : wishedWord) {
+            System.out.print(c);
         }
+        System.out.println();
     }
 
+    /**
+     * Распечатка оставшихся попыток для отгадки слова
+     * @param countOfMistakes количество ошибок
+     */
+    public static void printRemainedAttempts(int countOfMistakes){
+        System.out.printf("осталось попыток: %d ", MAX_COUNT_OF_MISTAKES - countOfMistakes);
+    }
 
-    //отрисовка отгаданных букв
-//    public void showGuessedLetterinHiddenWord(String[] hiddenletters, char inputLetter, String wishedWord){
-//       wishedWord.toCharArray();
-//        for (int i = 0; i < wishedWord.length(); i++) {
-//
-//            if (wishedWord.
-//        }
-//
-//
-//    }
+    /**
+     * Распечатка скрытой копии
+     * @param hiddenCopy "спрятанная" копия загаданного слова
+     */
+    public static void printHiddenCopy(char[] hiddenCopy){
+        System.out.print("\t\t\t\t");
+        for (char c : hiddenCopy) {
+            System.out.print(c);
+        }
+        System.out.println();
+    }
 
+    /**
+     * Сообщение об угаданной букве
+     */
+    public static void viewGreetingsOfRightLetterAppears(){
+        System.out.println("верно, есть такая буква! ");
+    }
 
+    /**
+     * Сообщение о неугаданной букве
+     */
+    public static void viewWrongLetterAppears(){
+        System.out.println("данной буквы нет слове ");
+    }
 
+    /**
+     * Открытие угаданных(ой) букв в скрытой копии
+     * @param supposedLetter угаданная пользователем буква
+     * @param hiddenSymbols массив символов спрятанного слова
+     * @param wishedWord массив букв загаданного слова
+     */
+    public static void openGuessedLettersInHiddenWord(char supposedLetter, char[] hiddenSymbols, char[] wishedWord){
+        for (int i = 0; i < wishedWord.length; i++) {
+            if (wishedWord[i] == supposedLetter){
+                hiddenSymbols[i] = supposedLetter;
+             }
+        }
+    }
 
 
 
