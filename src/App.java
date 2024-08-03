@@ -9,31 +9,68 @@ public class App {
     public static final int MAX_COUNT_OF_MISTAKES = 8;
     public static int countOfMistakes;
     public static void main(String[] args) {
-        ArrayList<String> words = writeWordsFromFileToList();
-        char[] wishedWord = getRandomWordFromList(words);
-        printWishedWord(wishedWord);
-        char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
-        printHiddenCopy(hiddenCopy);
-        char supposedLetter = inputLetterByUser();
-        if (isLetterAreInWishedWord(wishedWord, supposedLetter)){
-            viewGreetingsOfRightLetterAppears();
-            openGuessedLettersInHiddenWord(supposedLetter, hiddenCopy, wishedWord);
-            printHiddenCopy(hiddenCopy);
-        }
-        else{
-            viewWrongLetterAppears();
-            printHiddenCopy(hiddenCopy);
-            countOfMistakes++;
-            printRemainedAttempts(countOfMistakes);
-        }
 
+        startTheGames();
     }
+     public static  void startTheGames() {
+         boolean playGame = true;
+         while (true) {
+             printStartGame();
+             char startGame = inputLetterByUser();
+             if (Character.compare(startGame, 'С') != 0) {
+                 printEndGame();
+                 return;
+             } else {
+                 ArrayList<String> words = writeWordsFromFileToList();
+                 char[] wishedWord = getRandomWordFromList(words);
+                 assert wishedWord != null;
+                 printWishedWord(wishedWord);
+                 char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
+                 ArrayList<Character> earlierInputtedLetters = new ArrayList<Character>();
+                 while (true) {
+                     printHiddenCopy(hiddenCopy);
+                     char supposedLetter = inputLetterByUser();
+                     if (!isLetterAlreadyChoosen(supposedLetter, earlierInputtedLetters)) {
+                         if (isLetterAreInWishedWord(wishedWord, supposedLetter)) {
+                             viewGreetingsOfRightLetterAppears();
+                             openGuessedLettersInHiddenWord(supposedLetter, hiddenCopy, wishedWord);
+                             printHiddenCopy(hiddenCopy);
+                             if (isGameWin(wishedWord, hiddenCopy)) {
+                                 printPlayerWin();
+                                 startTheGames();
+                                 return;
+                             } else {
+                                 earlierInputtedLetters.add(supposedLetter);
+                                 printEarlierInputtedLetters(earlierInputtedLetters);
+                             }
+                         } else {
+                             viewWrongLetterAppears();
+                             earlierInputtedLetters.add(supposedLetter);
+                             printHiddenCopy(hiddenCopy);
+                             printEarlierInputtedLetters(earlierInputtedLetters);
+                             countOfMistakes++;
+                             printRemainedAttempts(countOfMistakes);
+                             if (countOfMistakes == MAX_COUNT_OF_MISTAKES) {
+                                 printPlayerLooseGame();
+                                 startTheGames();
+                             }
+                         }
+                     } else {
+                         viewLettersWasChoosenEarlier();
+                         earlierInputtedLetters.add(supposedLetter);
+                     }
+                 }
+             }
+         }
+     }
 
 
-    /**
-     * Запуск игры
-     */
-    public  void  startHangmanGame(){}
+    public static void printPlayerWin(){
+        System.out.println("УРРАААА Ты выиграл!!!\n\n");
+    }
+    public static void printPlayerLooseGame(){
+        System.out.println("Ты проиграл!:))))\n\n");
+    }
 
     /**
      * Запись слов из файла в список
@@ -77,7 +114,7 @@ public class App {
      * @return букву
      */
     public static char inputLetterByUser() {
-        System.out.print("введите букву: ");
+        System.out.print("\nвведите букву: ");
         Scanner sc = new Scanner(System.in);
         return sc.next().toUpperCase().charAt(0);
     }
@@ -127,7 +164,7 @@ public class App {
      * @param countOfMistakes количество ошибок
      */
     public static void printRemainedAttempts(int countOfMistakes){
-        System.out.printf("осталось попыток: %d ", MAX_COUNT_OF_MISTAKES - countOfMistakes);
+        System.out.printf("осталось попыток: %d \n\n", MAX_COUNT_OF_MISTAKES - countOfMistakes);
     }
 
     /**
@@ -135,11 +172,25 @@ public class App {
      * @param hiddenCopy "спрятанная" копия загаданного слова
      */
     public static void printHiddenCopy(char[] hiddenCopy){
-        System.out.print("\t\t\t\t");
+        System.out.print("\n\t\t");
         for (char c : hiddenCopy) {
             System.out.print(c);
         }
         System.out.println();
+    }
+
+    /**
+     * Старт игры
+     */
+    public static void printStartGame(){
+        System.out.print("СЫГРАЕМ?\nНАЖМИТЕ 'С' для старта или ЛЮБОЙ ДРУГОЙ символ для выхода их игры: ");
+    }
+
+    /**
+     * Сообщение об остановки игры
+     */
+    public static void printEndGame(){
+        System.out.println("ИГРА ЗАВЕРШЕНА");
     }
 
     /**
@@ -153,7 +204,41 @@ public class App {
      * Сообщение о неугаданной букве
      */
     public static void viewWrongLetterAppears(){
-        System.out.println("данной буквы нет слове ");
+        System.out.println("!!!данной буквы нет в слове!!! ");
+    }
+
+    /**
+     * Сообщение о том, что буква же была введена ранее
+     */
+    public static void viewLettersWasChoosenEarlier(){
+        System.out.println("!!!буква была введена ранее, повторите ввод!!!");
+    }
+
+    /**
+     * Проверка уже ранее введенных букв
+     * @param supposedLetter вводимая буква
+     * @param earlierInputtedLetter список уже введенных букв
+     * @return True - если буква ранее вводилась, иначе - False
+     */
+    public static boolean isLetterAlreadyChoosen(char supposedLetter, ArrayList<Character> earlierInputtedLetter){
+        if (earlierInputtedLetter.contains(supposedLetter)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * Распечатка ранее введенных букв
+     * @param earlierInputtedLetter список введенных букв
+     */
+    public static void printEarlierInputtedLetters(ArrayList<Character> earlierInputtedLetter){
+        System.out.print("___________________\nвведенные ранее буквы\n");
+        for (Character c: earlierInputtedLetter) {
+            System.out.printf(" %s ", c);
+        }
+        System.out.println();
+        //System.out.println("\n___________________");
     }
 
     /**
@@ -170,7 +255,20 @@ public class App {
         }
     }
 
-
+    /**
+     * Проверка статуса выигрыша игры
+     * @param wishedWord загаданное слово
+     * @param hiddenCopy раскрываемая скрытая копия
+     * @return да или нет
+     */
+    public static boolean  isGameWin(char[] wishedWord, char[] hiddenCopy ){
+        boolean isEquals = true;
+        for (int i = 0; i < wishedWord.length; i++) {
+            if (wishedWord[i] != hiddenCopy[i]){
+                isEquals = false;
+            }
+        } return isEquals;
+    }
 
 }
 
