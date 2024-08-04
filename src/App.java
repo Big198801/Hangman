@@ -308,7 +308,7 @@ public class App {
     /**
      * Обновление вида виселицы в зависимости от количества ошибок
      * @param hangman String[][] массив виселицы
-     * @param currentCountOfMistakes текущее количество допущенных ошибок
+     * @param currentCountOfMistakes текущее количество ошибок
      */
     public static void updateHangmanStatus(String[][] hangman, int currentCountOfMistakes){
         switch (currentCountOfMistakes){
