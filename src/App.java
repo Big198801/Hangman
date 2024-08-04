@@ -7,62 +7,63 @@ import java.util.Scanner;
 
 public class App {
     public static final int MAX_COUNT_OF_MISTAKES = 8;
-    public static int countOfMistakes;
     public static void main(String[] args) {
 
         startTheGames();
     }
-     public static  void startTheGames() {
-         boolean playGame = true;
-         while (true) {
-             printStartGame();
-             char startGame = inputLetterByUser();
-             if (Character.compare(startGame, 'С') != 0) {
-                 printEndGame();
-                 return;
-             } else {
-                 ArrayList<String> words = writeWordsFromFileToList();
-                 char[] wishedWord = getRandomWordFromList(words);
-                 assert wishedWord != null;
-                 printWishedWord(wishedWord);
-                 char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
-                 ArrayList<Character> earlierInputtedLetters = new ArrayList<Character>();
-                 while (true) {
-                     printHiddenCopy(hiddenCopy);
-                     char supposedLetter = inputLetterByUser();
-                     if (!isLetterAlreadyChoosen(supposedLetter, earlierInputtedLetters)) {
-                         if (isLetterAreInWishedWord(wishedWord, supposedLetter)) {
-                             viewGreetingsOfRightLetterAppears();
-                             openGuessedLettersInHiddenWord(supposedLetter, hiddenCopy, wishedWord);
-                             printHiddenCopy(hiddenCopy);
-                             if (isGameWin(wishedWord, hiddenCopy)) {
-                                 printPlayerWin();
-                                 startTheGames();
-                                 return;
-                             } else {
-                                 earlierInputtedLetters.add(supposedLetter);
-                                 printEarlierInputtedLetters(earlierInputtedLetters);
-                             }
-                         } else {
-                             viewWrongLetterAppears();
-                             earlierInputtedLetters.add(supposedLetter);
-                             printHiddenCopy(hiddenCopy);
-                             printEarlierInputtedLetters(earlierInputtedLetters);
-                             countOfMistakes++;
-                             printRemainedAttempts(countOfMistakes);
-                             if (countOfMistakes == MAX_COUNT_OF_MISTAKES) {
-                                 printPlayerLooseGame();
-                                 startTheGames();
-                             }
-                         }
-                     } else {
-                         viewLettersWasChoosenEarlier();
-                         earlierInputtedLetters.add(supposedLetter);
-                     }
-                 }
-             }
-         }
-     }
+    public static  void startTheGames() {
+        int countOfMistakes = 0;
+        while (true) {
+            printStartGame();
+            char startGame = inputLetterByUser();
+            if (Character.compare(startGame, 'С') != 0) {
+                printEndGame();
+                return;
+            } else {
+                ArrayList<String> words = writeWordsFromFileToList();
+                char[] wishedWord = getRandomWordFromList(words);
+                assert wishedWord != null;
+                printWishedWord(wishedWord);
+                char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
+                ArrayList<Character> earlierInputtedLetters = new ArrayList<Character>();
+                while (true) {
+                    printHiddenCopy(hiddenCopy);
+                    char supposedLetter = inputLetterByUser();
+                    if (!isLetterAlreadyChoosen(supposedLetter, earlierInputtedLetters)) {
+                        if (isLetterAreInWishedWord(wishedWord, supposedLetter)) {
+                            viewGreetingsOfRightLetterAppears();
+                            openGuessedLettersInHiddenWord(supposedLetter, hiddenCopy, wishedWord);
+                            printHiddenCopy(hiddenCopy);
+                            if (isGameWin(wishedWord, hiddenCopy)) {
+                                printPlayerWin();
+                                startTheGames();
+                                return;
+                            } else {
+                                earlierInputtedLetters.add(supposedLetter);
+                                printEarlierInputtedLetters(earlierInputtedLetters);
+                            }
+                        } else {
+                            viewWrongLetterAppears();
+                            earlierInputtedLetters.add(supposedLetter);
+                            printHiddenCopy(hiddenCopy);
+                            printEarlierInputtedLetters(earlierInputtedLetters);
+                            countOfMistakes++;
+                            printRemainedAttempts(countOfMistakes);
+                            if (countOfMistakes == MAX_COUNT_OF_MISTAKES) {
+                                printPlayerLooseGame();
+                                startTheGames();
+                                return;
+
+                            }
+                        }
+                    } else {
+                        viewLettersWasChoosenEarlier();
+                        earlierInputtedLetters.add(supposedLetter);
+                    }
+                }
+            }
+        }
+    }
 
 
     public static void printPlayerWin(){
@@ -78,20 +79,20 @@ public class App {
      */
     public static ArrayList<String> writeWordsFromFileToList()  {
         ArrayList<String> words = new ArrayList<>();
-           try {
-               FileReader fr = new FileReader("words.txt");
-               BufferedReader reader = new BufferedReader(fr);
-               String line = reader.readLine();
-               while (line != null) {
-                   words.add(line.trim().toUpperCase());
-                   line = reader.readLine();
-               }
-               fr.close();
-               reader.close();
-           }
-           catch (IOException e){
-               e.getMessage();
-           }
+        try {
+            FileReader fr = new FileReader("words.txt");
+            BufferedReader reader = new BufferedReader(fr);
+            String line = reader.readLine();
+            while (line != null) {
+                words.add(line.trim().toUpperCase());
+                line = reader.readLine();
+            }
+            fr.close();
+            reader.close();
+        }
+        catch (IOException e){
+            e.getMessage();
+        }
         return words;
 
     }
@@ -183,7 +184,7 @@ public class App {
      * Старт игры
      */
     public static void printStartGame(){
-        System.out.print("СЫГРАЕМ?\nНАЖМИТЕ 'С' для старта или ЛЮБОЙ ДРУГОЙ символ для выхода их игры: ");
+        System.out.print("НАЖМИТЕ 'С' для старта или ЛЮБОЙ ДРУГОЙ символ для выхода их игры: ");
     }
 
     /**
@@ -251,7 +252,7 @@ public class App {
         for (int i = 0; i < wishedWord.length; i++) {
             if (wishedWord[i] == supposedLetter){
                 hiddenSymbols[i] = supposedLetter;
-             }
+            }
         }
     }
 
