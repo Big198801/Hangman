@@ -26,7 +26,7 @@ public class App {
                 assert wishedWord != null;
                 printWishedWord(wishedWord);
                 char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
-                ArrayList<Character> earlierInputtedLetters = new ArrayList<Character>();
+                ArrayList<Character> earlierInputtedLetters = new ArrayList<>();
                 while (true) {
                     printHiddenCopy(hiddenCopy);
                     char supposedLetter = inputLetterByUser();
@@ -223,11 +223,7 @@ public class App {
      * @return True - если буква ранее вводилась, иначе - False
      */
     public static boolean isLetterAlreadyChoosen(char supposedLetter, ArrayList<Character> earlierInputtedLetter){
-        if (earlierInputtedLetter.contains(supposedLetter)){
-            return true;
-        }else{
-            return false;
-        }
+        return earlierInputtedLetter.contains(supposedLetter);
     }
 
     /**
@@ -266,8 +262,9 @@ public class App {
     public static boolean  isGameWin(char[] wishedWord, char[] hiddenCopy ){
         boolean isEquals = true;
         for (int i = 0; i < wishedWord.length; i++) {
-            if (wishedWord[i] != hiddenCopy[i]){
+            if (wishedWord[i] != hiddenCopy[i]) {
                 isEquals = false;
+                break;
             }
         } return isEquals;
     }
