@@ -1,34 +1,39 @@
 import java.io.BufferedReader;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import java.util.Scanner;
 
 public class App {
     public static final int MAX_COUNT_OF_MISTAKES = 8;
     public static void main(String[] args) {
-        String[][] hangman = getAndFillDefaultArray();
-        printHangman(hangman);
-        //startTheGames();
+
+
+        startTheGames();
     }
     public static  void startTheGames() {
         int countOfMistakes = 0;
-        while (true) {
             printStartGame();
             char startGame = inputLetterByUser();
-            if (Character.compare(startGame, 'С') != 0) {
+            if (startGame != 'С') {
                 printEndGame();
-                return;
-            } else {
+            }
+            else {
+                String[][] hangman = getAndFillDefaultArray();
+                //printHangman(hangman);
                 ArrayList<String> words = writeWordsFromFileToList();
                 char[] wishedWord = getRandomWordFromList(words);
                 assert wishedWord != null;
-                printWishedWord(wishedWord);
+                //printWishedWord(wishedWord);
                 char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
                 ArrayList<Character> earlierInputtedLetters = new ArrayList<>();
+
                 while (true) {
                     printHiddenCopy(hiddenCopy);
+                    //printEarlierInputtedLetters(earlierInputtedLetters);
                     char supposedLetter = inputLetterByUser();
                     if (!isLetterAlreadyChoosen(supposedLetter, earlierInputtedLetters)) {
                         if (isLetterAreInWishedWord(wishedWord, supposedLetter)) {
@@ -39,31 +44,35 @@ public class App {
                                 printPlayerWin();
                                 startTheGames();
                                 return;
-                            } else {
-                                earlierInputtedLetters.add(supposedLetter);
-                                printEarlierInputtedLetters(earlierInputtedLetters);
                             }
-                        } else {
-                            viewWrongLetterAppears();
                             earlierInputtedLetters.add(supposedLetter);
+                            printEarlierInputtedLetters(earlierInputtedLetters);
+                            printRemainedAttempts(countOfMistakes);
+                        }
+                        else {
+                            viewWrongLetterAppears();
+                            countOfMistakes++;
+                            earlierInputtedLetters.add(supposedLetter);
+                            updateHangmanStatus(hangman, countOfMistakes);
+                            printHangman(hangman);
                             printHiddenCopy(hiddenCopy);
                             printEarlierInputtedLetters(earlierInputtedLetters);
-                            countOfMistakes++;
-                            printRemainedAttempts(countOfMistakes);
                             if (countOfMistakes == MAX_COUNT_OF_MISTAKES) {
                                 printPlayerLooseGame();
+                                printWishedWord(wishedWord);
                                 startTheGames();
                                 return;
-
                             }
+                            printRemainedAttempts(countOfMistakes);
                         }
-                    } else {
+                    }
+                    else {
                         viewLettersWasChoosenEarlier();
-                        earlierInputtedLetters.add(supposedLetter);
+                        printEarlierInputtedLetters(earlierInputtedLetters);
                     }
                 }
             }
-        }
+
     }
 
 
@@ -92,7 +101,7 @@ public class App {
             reader.close();
         }
         catch (IOException e){
-            e.getMessage();
+            String message = e.getMessage();
         }
         return words;
 
@@ -174,7 +183,7 @@ public class App {
      * @param hiddenCopy "спрятанная" копия загаданного слова
      */
     public static void printHiddenCopy(char[] hiddenCopy){
-        System.out.print("\n\t\t");
+        System.out.print("\nОтгадываемое слово: ");
         for (char c : hiddenCopy) {
             System.out.print(c);
         }
@@ -310,13 +319,21 @@ public class App {
     public static void updateHangmanStatus(String[][] hangman, int currentCountOfMistakes){
         switch (currentCountOfMistakes){
             case 1: hangman[2][3] = " O";
+            break;
             case 2: hangman[3][3] = " -";
+            break;
             case 3: hangman[4][2] = " /";
+            break;
             case 4: hangman[4][3] = "|";
+            break;
             case 5: hangman[4][4] = "\\";
+            break;
             case 6: hangman[5][3] = " |";
+            break;
             case 7: hangman[6][2] = " /";
+            break;
             case 8: hangman[6][4] = "\\ ";
+            break;
         }
     }
 
