@@ -8,8 +8,9 @@ import java.util.Scanner;
 public class App {
     public static final int MAX_COUNT_OF_MISTAKES = 8;
     public static void main(String[] args) {
-
-        startTheGames();
+        String[][] hangman = getAndFillDefaultArray();
+        printHangman(hangman);
+        //startTheGames();
     }
     public static  void startTheGames() {
         int countOfMistakes = 0;
@@ -269,6 +270,57 @@ public class App {
                 isEquals = false;
             }
         } return isEquals;
+    }
+
+    /**
+     * Создает изначальный вид виселицы
+     * @return  заполненный массив String[][]
+     */
+    public static String[][] getAndFillDefaultArray(){
+        return new String[][]{
+                {" ", " _ ", "_ ", "_", " "},//default view
+                {" ", "|", " ", " |", " "},
+                {" ", "|", " ", " ", " "}, //1    [2][3] = " O";
+                {" ", "|", " ", " ", " "}, //2    [3][3] = " -";
+                {" ", "|", " ", " ", " "},//3-5  [4][2] = " /"; [4][3] = "|";  [4][4] = "\\";
+                {" ", "|", " ", " ", " "}, //6    [5][3] = " |";
+                {" ", "|", " ", " ", " "}, //7  [6][2] = " /"; [6][4] = "\\ ";
+                {"_", "|", "_", " ", " "}
+        };
+
+    }
+
+
+    /**
+     * Распечатка виселицы
+     * @param hangman Массив виселицы
+     */
+    public static void printHangman(String[][] hangman){
+        for (int i = 0; i < hangman.length; i++) {
+            System.out.println();
+            for (int j = 0; j < hangman[i].length; j++) {
+                System.out.print(hangman[i][j]);
+            }
+
+        }
+    }
+
+    /**
+     * Обновление вида виселицы в зависимости от количества ошибок
+     * @param hangman String[][] массив виселицы
+     * @param currentCountOfMistakes текущее количество допущенных ошибок
+     */
+    public static void updateHangmanStatus(String[][] hangman, int currentCountOfMistakes){
+        switch (currentCountOfMistakes){
+            case 1: hangman[2][3] = " O";
+            case 2: hangman[3][3] = " -";
+            case 3: hangman[4][2] = " /";
+            case 4: hangman[4][3] = "|";
+            case 5: hangman[4][4] = "\\";
+            case 6: hangman[5][3] = " |";
+            case 7: hangman[6][2] = " /";
+            case 8: hangman[6][4] = "\\ ";
+        }
     }
 
 }
