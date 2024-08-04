@@ -10,8 +10,6 @@ import java.util.Scanner;
 public class App {
     public static final int MAX_COUNT_OF_MISTAKES = 8;
     public static void main(String[] args) {
-
-
         startTheGames();
     }
     public static  void startTheGames() {
@@ -307,7 +305,6 @@ public class App {
             for (int j = 0; j < hangman[i].length; j++) {
                 System.out.print(hangman[i][j]);
             }
-
         }
     }
 
@@ -317,23 +314,15 @@ public class App {
      * @param currentCountOfMistakes текущее количество ошибок
      */
     public static void updateHangmanStatus(String[][] hangman, int currentCountOfMistakes){
-        switch (currentCountOfMistakes){
-            case 1: hangman[2][3] = " O";
-            break;
-            case 2: hangman[3][3] = " -";
-            break;
-            case 3: hangman[4][2] = " /";
-            break;
-            case 4: hangman[4][3] = "|";
-            break;
-            case 5: hangman[4][4] = "\\";
-            break;
-            case 6: hangman[5][3] = " |";
-            break;
-            case 7: hangman[6][2] = " /";
-            break;
-            case 8: hangman[6][4] = "\\ ";
-            break;
+        switch (currentCountOfMistakes) {
+            case 1 -> hangman[2][3] = " O";
+            case 2 -> hangman[3][3] = " -";
+            case 3 -> hangman[4][2] = " /";
+            case 4 -> hangman[4][3] = "|";
+            case 5 -> hangman[4][4] = "\\";
+            case 6 -> hangman[5][3] = " |";
+            case 7 -> hangman[6][2] = " /";
+            case 8 -> hangman[6][4] = "\\ ";
         }
     }
 
