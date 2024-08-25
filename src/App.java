@@ -3,30 +3,32 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class App {
-    public static final int MAX_COUNT_OF_MISTAKES = 8;
-    public static void main(String[] args) {
+    private static final int MAX_COUNT_OF_MISTAKES = 8;
+    private static ArrayList<String> allowedLettersToStart = new ArrayList<>(Arrays.asList("C", "С"));
+    public static void main(String[] args) throws IOException {
         startTheGames();
     }
-    public static  void startTheGames() {
+    public static  void startTheGames() throws IOException {
+
         int countOfMistakes = 0;
             printStartGame();
-            char startGame = inputLetterByUser();
-            if (startGame != 'С') {
+            String startGame = inputLetterByUser();
+            if (!allowedLettersToStart.contains(startGame)){
                 printEndGame();
             }
             else {
                 String[][] hangman = getAndFillDefaultArray();
                 ArrayList<String> words = writeWordsFromFileToList();
                 char[] wishedWord = getRandomWordFromList(words);
-                assert wishedWord != null;
                 char[] hiddenCopy = makeWishedWordHiddenCopy(wishedWord);
-                ArrayList<Character> earlierInputtedLetters = new ArrayList<>();
+                ArrayList<String> earlierInputtedLetters = new ArrayList<>();
                 while (true) {
                     printHiddenCopy(hiddenCopy);
-                    char supposedLetter = inputLetterByUser();
+                    String supposedLetter = inputLetterByUser();
                     if (!isLetterAlreadyChoosen(supposedLetter, earlierInputtedLetters)) {
                         if (isLetterAreInWishedWord(wishedWord, supposedLetter)) {
                             viewGreetingsOfRightLetterAppears();
@@ -69,16 +71,14 @@ public class App {
      */
     public static ArrayList<String> writeWordsFromFileToList()  {
         ArrayList<String> words = new ArrayList<>();
-        try {
-            FileReader fr = new FileReader("words.txt");
-            BufferedReader reader = new BufferedReader(fr);
+        try(FileReader fr = new FileReader("words.txt");
+            BufferedReader reader = new BufferedReader(fr))
+        {
             String line = reader.readLine();
             while (line != null) {
                 words.add(line.trim().toUpperCase());
                 line = reader.readLine();
             }
-            fr.close();
-            reader.close();
         }
         catch (IOException e){
             String message = e.getMessage();
@@ -92,9 +92,9 @@ public class App {
      * @param listOfWords принимает список ArrayList<String> слов
      * @return String
      */
-    public static char[] getRandomWordFromList(ArrayList<String> listOfWords){
+    public static char[] getRandomWordFromList(ArrayList<String> listOfWords) throws IOException {
         if (listOfWords.size() == 0){
-            return null;
+            throw new IOException();
         }
         int randomNum = 1 + (int) (Math.random()*listOfWords.size()-1); //интервал от 1 до listOfWords.size()-1
         return listOfWords.get(randomNum-1).toCharArray();//вычитаем 1 для возможности включения 0-го элемента
@@ -102,12 +102,24 @@ public class App {
 
     /**
      * Ввод буквы от пользователя
+     *
      * @return букву
      */
-    public static char inputLetterByUser() {
+    public static String inputLetterByUser() {
         System.out.print("\nвведите букву: ");
         Scanner sc = new Scanner(System.in);
-        return sc.next().toUpperCase().charAt(0);
+        String str;
+        str = sc.next().toUpperCase();
+        String s2= "";
+        if (str.length() > 1) {
+            System.out.println("неверный ввод");
+            inputLetterByUser();
+
+        } else {
+            s2 = str;
+
+        }
+        return s2;
     }
 
     /**
@@ -116,7 +128,7 @@ public class App {
      * @param earlierInputtedLetter список уже введенных букв
      * @return True - если буква ранее вводилась, иначе - False
      */
-    public static boolean isLetterAlreadyChoosen(char supposedLetter, ArrayList<Character> earlierInputtedLetter){
+    public static boolean isLetterAlreadyChoosen(String supposedLetter, ArrayList<String> earlierInputtedLetter){
         return earlierInputtedLetter.contains(supposedLetter);
     }
 
@@ -126,10 +138,10 @@ public class App {
      * @param inputLetterByUser введенная буква
      * @return true or false
      */
-    public static boolean isLetterAreInWishedWord(char[] wishedWord, char inputLetterByUser) {
+    public static boolean isLetterAreInWishedWord(char[] wishedWord, String inputLetterByUser) {
         boolean isContains = false;
         for (char ch : wishedWord) {
-            if (ch == inputLetterByUser) {
+            if (inputLetterByUser.equals(new String(String.valueOf(ch)))) {
                 isContains = true;
                 break;
             }
@@ -235,10 +247,10 @@ public class App {
      * Распечатка ранее введенных букв
      * @param earlierInputtedLetter список введенных букв
      */
-    public static void printEarlierInputtedLetters(ArrayList<Character> earlierInputtedLetter){
+    public static void printEarlierInputtedLetters(ArrayList<String> earlierInputtedLetter){
         System.out.print("Введенные ранее буквы:\n");
-        for (Character c: earlierInputtedLetter) {
-            System.out.printf(" %s ", c);
+        for (String c: earlierInputtedLetter) {
+            System.out.printf(" %s  ", c);
         }
         System.out.println();
         //System.out.println("\n___________________");
@@ -264,10 +276,10 @@ public class App {
      * @param hiddenSymbols массив символов спрятанного слова
      * @param wishedWord массив букв загаданного слова
      */
-    public static void openGuessedLettersInHiddenWord(char supposedLetter, char[] hiddenSymbols, char[] wishedWord){
+    public static void openGuessedLettersInHiddenWord(String supposedLetter, char[] hiddenSymbols, char[] wishedWord){
         for (int i = 0; i < wishedWord.length; i++) {
-            if (wishedWord[i] == supposedLetter){
-                hiddenSymbols[i] = supposedLetter;
+            if (String.valueOf(wishedWord[i]).equals(supposedLetter)){
+                hiddenSymbols[i] = supposedLetter.charAt(0);
             }
         }
     }
